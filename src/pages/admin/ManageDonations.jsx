@@ -1,63 +1,92 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
+
+const API = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL || "http://localhost:5000",
+});
 
 const ManageDonations = () => {
   const [donations, setDonations] = useState([]);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("Student");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchDonations();
   }, []);
 
   const fetchDonations = async () => {
+    setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/donations");
-      if (!response.ok) throw new Error("Failed to fetch donations");
-
-      const data = await response.json();
-      setDonations(data);
-    } catch (error) {
-      console.error(error);
+      const response = await API.get("/donations");
+      setDonations(response.data);
+    } catch (err) {
+      setError("Failed to fetch donations");
+    } finally {
+      setLoading(false);
     }
   };
 
   const addDonation = async (e) => {
     e.preventDefault();
+    setError("");
+
+    if (!name || !amount || isNaN(amount)) {
+      setError("Please enter valid name and amount.");
+      return;
+    }
+
     try {
-      const response = await fetch("http://localhost:5000/donations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, amount, category }),
-      });
-
-      if (!response.ok) throw new Error("Failed to add donation");
-
+      await API.post("/donations", { name, amount, category });
+      setName("");
+      setAmount("");
+      setCategory("Student");
       fetchDonations();
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      setError("Failed to add donation");
     }
   };
 
   return (
-    <div>
-      <h1>Manage Donations</h1>
-      <form onSubmit={addDonation}>
-        <input type="text" placeholder="Donor Name" value={name} onChange={(e) => setName(e.target.value)} required />
-        <input type="number" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} required />
+    <div style={{ padding: "20px" }}>
+      <h2>Manage Donations</h2>
+
+      <form onSubmit={addDonation} style={{ display: "flex", gap: "10px", marginBottom: "20px", flexWrap: "wrap" }}>
+        <input
+          type="text"
+          placeholder="Donor Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <input
+          type="number"
+          placeholder="Amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          required
+        />
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
           <option value="Student">Student</option>
           <option value="Alumni">Alumni</option>
         </select>
         <button type="submit">Add Donation</button>
       </form>
-      <ul>
-        {donations.map((donation) => (
-          <li key={donation.id}>
-            {donation.name} donated ${donation.amount} ({donation.category})
-          </li>
-        ))}
-      </ul>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {loading ? (
+        <p>Loading donations...</p>
+      ) : (
+        <ul>
+          {donations.map((donation) => (
+            <li key={donation.id}>
+              <strong>{donation.name}</strong> donated ₹{donation.amount} ({donation.category})
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import "../../src/pages/LoginSelection.css";
+import "../../src/pages/loginSelection.css";
 
 function LoginSelection() {
   const navigate = useNavigate();

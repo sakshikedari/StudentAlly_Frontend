@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./JobPortal.css";
+import "./jobPortal.css";
 
 function JobPortal() {
   const [jobs, setJobs] = useState([]);

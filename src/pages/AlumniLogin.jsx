@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../api.js"; 
 import { FiEye, FiEyeOff } from "react-icons/fi"; 
-import "./Login.css";
+import "./login.css";
 
 function Login() {
   const {

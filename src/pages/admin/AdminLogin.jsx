@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./AdminLogin.css";
+import "./adminLogin.css";
+
+// Axios instance
+const API = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL || "http://localhost:5000",
+  withCredentials: true,
+});
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -12,27 +18,26 @@ const AdminLogin = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-  
+    setLoading(true);
+    setError("");
+
     try {
-      const res = await axios.post(
-        "http://localhost:5000/admin/auth/login",
-        { email, password },
-        { withCredentials: true } 
-      );
-  
+      const res = await API.post("/admin/login", { email, password }); 
       const token = res.data.token;
+
       if (!token) {
         throw new Error("No token received");
       }
-  
-      localStorage.setItem("adminToken", token); 
-      console.log("Stored Token:", token); 
+
+      localStorage.setItem("adminToken", token);
       navigate("/admin");
-    } catch (error) {
-      alert("Invalid email or password");
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Invalid email or password");
+    } finally {
+      setLoading(false);
     }
   };
-  
 
   return (
     <div className="admin-login-container">

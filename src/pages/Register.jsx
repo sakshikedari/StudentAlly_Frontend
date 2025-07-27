@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../api";
 import { FiEye, FiEyeOff } from "react-icons/fi"; // Eye icons
-import "./Register.css";
+import "./register.css";
 
 function Register() {
   const {
