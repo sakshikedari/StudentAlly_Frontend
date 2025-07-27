@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import "./home.css"; 
+import "./Home.css"; 
 import successImage from "../../src/pages/success.jpg";
 import meetImage from "../../src/pages/meet.jpg";
 import { useEffect } from "react";

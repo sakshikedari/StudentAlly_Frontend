@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./jobPortal.css";
+import "./JobPortal.css";
+import axios from "axios";
+
+const API = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+  withCredentials: true,
+});
 
 function JobPortal() {
   const [jobs, setJobs] = useState([]);
@@ -29,12 +35,19 @@ function JobPortal() {
       setNewJob((prev) => ({ ...prev, posted_by: storedUser.name }));
     }
 
-    fetch("http://localhost:5000/jobs")
-      .then((res) => res.json())
-      .then((data) => setJobs(data))
-      .catch((err) => console.error("Error fetching jobs:", err))
-      .finally(() => setLoading(false));
+    fetchJobs();
   }, []);
+
+  const fetchJobs = async () => {
+    try {
+      const res = await API.get("/jobs");
+      setJobs(res.data);
+    } catch (err) {
+      console.error("Error fetching jobs:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePostJobClick = () => {
     if (!user) {
@@ -54,30 +67,16 @@ function JobPortal() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!user) {
       alert("⚠️ You must be logged in to post a job!");
       navigate("/alumni-login");
       return;
     }
 
-    const token = localStorage.getItem("token");
-
     try {
-      const response = await fetch("http://localhost:5000/jobs", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(newJob),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to post job");
-      }
-
-      const addedJob = await response.json();
-      setJobs([...jobs, addedJob]);
+      const res = await API.post("/jobs", newJob);
+      setJobs([...jobs, res.data]);
       setShowForm(false);
       alert("✅ Job posted successfully!");
 
@@ -123,33 +122,25 @@ function JobPortal() {
               placeholder="Job Title"
               required
               value={newJob.title}
-              onChange={(e) =>
-                setNewJob({ ...newJob, title: e.target.value })
-              }
+              onChange={(e) => setNewJob({ ...newJob, title: e.target.value })}
             />
             <input
               type="text"
               placeholder="Company"
               required
               value={newJob.company}
-              onChange={(e) =>
-                setNewJob({ ...newJob, company: e.target.value })
-              }
+              onChange={(e) => setNewJob({ ...newJob, company: e.target.value })}
             />
             <input
               type="text"
               placeholder="Location"
               required
               value={newJob.location}
-              onChange={(e) =>
-                setNewJob({ ...newJob, location: e.target.value })
-              }
+              onChange={(e) => setNewJob({ ...newJob, location: e.target.value })}
             />
             <select
               value={newJob.type}
-              onChange={(e) =>
-                setNewJob({ ...newJob, type: e.target.value })
-              }
+              onChange={(e) => setNewJob({ ...newJob, type: e.target.value })}
             >
               <option value="Full-time">Full-time</option>
               <option value="Part-time">Part-time</option>
@@ -160,23 +151,17 @@ function JobPortal() {
               placeholder="Job Description"
               required
               value={newJob.description}
-              onChange={(e) =>
-                setNewJob({ ...newJob, description: e.target.value })
-              }
+              onChange={(e) => setNewJob({ ...newJob, description: e.target.value })}
             ></textarea>
             <input
               type="text"
               placeholder="Job Link (Apply Here)"
               required
               value={newJob.job_link}
-              onChange={(e) =>
-                setNewJob({ ...newJob, job_link: e.target.value })
-              }
+              onChange={(e) => setNewJob({ ...newJob, job_link: e.target.value })}
             />
             <div className="form-buttons">
-              <button type="submit" className="btn-primary">
-                Submit
-              </button>
+              <button type="submit" className="btn-primary">Submit</button>
               <button
                 type="button"
                 className="btn-secondary"
@@ -232,7 +217,9 @@ function JobPortal() {
                   <p>Posted by: {job.posted_by}</p>
                   <p>
                     Posted on:{" "}
-                    {new Date(job.posted_date).toLocaleDateString()}
+                    {job.posted_date
+                      ? new Date(job.posted_date).toLocaleDateString()
+                      : "N/A"}
                   </p>
                 </div>
                 {job.job_link ? (

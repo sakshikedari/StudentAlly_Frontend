@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../src/pages/successStories.css";
+import axios from "axios";
+
+const API = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+  withCredentials: true,
+});
 
 function SuccessStories() {
   const [stories, setStories] = useState([]);
@@ -23,12 +29,17 @@ function SuccessStories() {
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     setUser(storedUser);
-
-    fetch("http://localhost:5000/success-stories")
-      .then((res) => res.json())
-      .then((data) => setStories(data))
-      .catch((err) => console.error("Error fetching stories:", err));
+    fetchStories();
   }, []);
+
+  const fetchStories = async () => {
+    try {
+      const res = await API.get("/success-stories");
+      setStories(res.data);
+    } catch (err) {
+      console.error("Error fetching stories:", err);
+    }
+  };
 
   const handleSubmitClick = () => {
     if (!user) {
@@ -56,23 +67,16 @@ function SuccessStories() {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:5000/success-stories", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          achievements: formData.achievements
-            ? formData.achievements.split(",").map((ach) => ach.trim())
-            : [],
-        }),
-      });
+      const payload = {
+        ...formData,
+        achievements: formData.achievements
+          ? formData.achievements.split(",").map((ach) => ach.trim())
+          : [],
+      };
 
-      if (!response.ok) {
-        throw new Error("Failed to submit story");
-      }
+      const res = await API.post("/success-stories", payload);
 
-      const newStory = await response.json();
-      setStories([...stories, newStory]);
+      setStories([...stories, res.data]);
       setShowForm(false);
       setFormData({
         name: "",
@@ -82,8 +86,8 @@ function SuccessStories() {
         summary: "",
         achievements: "",
       });
-    } catch (error) {
-      console.error("Error submitting story:", error);
+    } catch (err) {
+      console.error("Error submitting story:", err);
       setError("Failed to submit. Try again.");
     } finally {
       setLoading(false);
@@ -169,7 +173,8 @@ function SuccessStories() {
           {stories.map((story) => {
             const achievements = Array.isArray(story.achievements)
               ? story.achievements
-              : JSON.parse(story.achievements);
+              : JSON.parse(story.achievements || "[]");
+
             return (
               <div key={story.id} className="success-card">
                 {story.image ? (

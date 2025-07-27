@@ -2,10 +2,19 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "./alumniDirectory.css";
 
+const API = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+  withCredentials: true,
+});
+
 function AlumniDirectory() {
   const [alumni, setAlumni] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterYear, setFilterYear] = useState("");
+  const [formVisible, setFormVisible] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,11 +26,7 @@ function AlumniDirectory() {
     linkedin: "",
     github: "",
   });
-  const [formVisible, setFormVisible] = useState(false);
-  const [editingId, setEditingId] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
 
-  // Fetch logged-in user info from localStorage
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
@@ -31,8 +36,7 @@ function AlumniDirectory() {
   }, []);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/alumni")
+    API.get("/alumni")
       .then((res) => setAlumni(res.data))
       .catch((err) => console.error("Error fetching alumni:", err));
   }, []);
@@ -55,15 +59,15 @@ function AlumniDirectory() {
 
     try {
       if (editingId) {
-        await axios.put(`http://localhost:5000/alumni/${editingId}`, formData);
+        await API.put(`/alumni/${editingId}`, formData);
       } else {
-        await axios.post("http://localhost:5000/alumni", {
+        await API.post("/alumni", {
           ...formData,
           user_id: currentUser.id,
         });
       }
 
-      const response = await axios.get("http://localhost:5000/alumni");
+      const response = await API.get("/alumni");
       setAlumni(response.data);
       setFormVisible(false);
       setEditingId(null);
@@ -101,17 +105,17 @@ function AlumniDirectory() {
 
     if (window.confirm("Are you sure you want to delete this profile?")) {
       try {
-        await axios.delete(`http://localhost:5000/alumni/${id}`);
-        setAlumni(alumni.filter((alumnus) => alumnus.id !== id));
+        await API.delete(`/alumni/${id}`);
+        setAlumni(alumni.filter((a) => a.id !== id));
       } catch (error) {
         console.error("Error deleting alumni:", error);
       }
     }
   };
 
-  const filteredAlumni = alumni.filter((alumnus) =>
-    alumnus.name?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-    (filterYear === "" || alumnus.graduation_year?.toString() === filterYear)
+  const filteredAlumni = alumni.filter((a) =>
+    a.name?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    (filterYear === "" || a.graduation_year?.toString() === filterYear)
   );
 
   return (
@@ -120,8 +124,8 @@ function AlumniDirectory() {
         <img src="/img/alumni.jpg" alt="Alumni Banner" className="banner-image" />
         <h2>Welcome to the Alumni Directory</h2>
         <p>
-          Discover and connect with alumni who have contributed to various industries. Stay in touch with your network,
-          find mentorship, and explore success stories from graduates of different years.
+          Discover and connect with alumni who have contributed to various industries.
+          Stay in touch with your network, find mentorship, and explore success stories.
         </p>
       </section>
 

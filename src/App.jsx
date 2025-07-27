@@ -12,13 +12,13 @@ import JobPortal from "./pages/JobPortal";
 import SuccessStories from "./pages/SuccessStories";
 import Events from "./pages/Events";
 import Donate from "./pages/Donate";
-import AdminRoutes from "./routes/AdminRoutes"; 
+import AdminRoutes from "./routes/AdminRoutes";
 import axios from "axios";
 import './index.css';
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL, 
-  withCredentials: true, 
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+  withCredentials: true,
 });
 
 function App() {
@@ -31,7 +31,7 @@ function App() {
 
     const fetchUserRole = async () => {
       try {
-        const res = await axios.get(API, { withCredentials: true });
+        const res = await API.get("/user-role");
         setUserRole(res.data.role);
       } catch (error) {
         console.error("Error fetching user role", error);
@@ -58,6 +58,7 @@ function App() {
           <Route path="/donate" element={<Donate />} />
         </Routes>
 
+        {/* Admin Panel Routes */}
         <AdminRoutes adminToken={adminToken} userRole={userRole} />
       </main>
       <Footer />

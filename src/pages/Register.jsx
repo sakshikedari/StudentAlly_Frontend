@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../api";
-import { FiEye, FiEyeOff } from "react-icons/fi"; // Eye icons
-import "./register.css";
+import { FiEye, FiEyeOff } from "react-icons/fi"; 
+import "./Register.css";
 
 function Register() {
   const {

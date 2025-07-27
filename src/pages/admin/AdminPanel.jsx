@@ -19,7 +19,7 @@ import {
   Alert,
 } from "@mui/material";
 import axios from "axios";
-import "./adminPanel.css";
+import "./AdminPanel.css";
 
 // Axios instance
 const API = axios.create({

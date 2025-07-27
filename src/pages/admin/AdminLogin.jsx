@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./adminLogin.css";
+import "./AdminLogin.css";
 
 // Axios instance
 const API = axios.create({

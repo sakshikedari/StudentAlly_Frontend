@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./donate.css";
+
+const API = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+  withCredentials: true,
+});
 
 function Donate() {
   const [donations, setDonations] = useState([]);
@@ -20,9 +26,8 @@ function Donate() {
 
   const fetchDonations = async () => {
     try {
-      const response = await fetch("http://localhost:5000/donations");
-      const data = await response.json();
-      setDonations(data);
+      const response = await API.get("/donations");
+      setDonations(response.data);
     } catch (error) {
       console.error("Error fetching donations:", error);
     }
