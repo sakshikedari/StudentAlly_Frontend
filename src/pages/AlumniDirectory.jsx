@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "./AlumniDirectory.css";
+import "./alumniDirectory.css";
 
 function AlumniDirectory() {
   const [alumni, setAlumni] = useState([]);
