@@ -16,6 +16,10 @@ import AdminRoutes from "./routes/AdminRoutes";
 import axios from "axios";
 import './index.css';
 
+const API = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL, 
+  withCredentials: true, 
+});
 
 function App() {
   const [adminToken, setAdminToken] = useState(null);
@@ -27,7 +31,7 @@ function App() {
 
     const fetchUserRole = async () => {
       try {
-        const res = await axios.get(process.env.VITE_BACKEND_URL, { withCredentials: true });
+        const res = await axios.get(API, { withCredentials: true });
         setUserRole(res.data.role);
       } catch (error) {
         console.error("Error fetching user role", error);

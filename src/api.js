@@ -1,9 +1,10 @@
 import axios from 'axios';
 
+
 // Set up the backend base URL from environment variables or default to localhost
 const API = axios.create({
-  baseURL:process.env.VITE_BACKEND_URL, 
-  withCredentials: true, 
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+  withCredentials: true,
 });
 
 // Register User
