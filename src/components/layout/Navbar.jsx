@@ -86,7 +86,7 @@ function Navbar() {
   const navLinks = [
     { to: "/directory", label: "Directory" },
     { to: "/jobs", label: "Jobs" },
-    { to: "/success-stories", label: "Success Stories" },
+    { to: "/success", label: "Success Stories" },
     { to: "/events", label: "Events" },
     { to: "/donate", label: "Donate" },
   ];
