@@ -34,7 +34,7 @@ function SuccessStories() {
 
   const fetchStories = async () => {
     try {
-      const res = await API.get("/success-stories");
+      const res = await API.get("/success");
       setStories(res.data);
     } catch (err) {
       console.error("Error fetching stories:", err);
@@ -43,7 +43,7 @@ function SuccessStories() {
 
   const handleSubmitClick = () => {
     if (!user) {
-      alert("⚠️ Please log in to submit your success story!");
+      alert("Please log in to submit your success story!");
       navigate("/alumni-login");
       return;
     }
@@ -58,7 +58,7 @@ function SuccessStories() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
-      alert("⚠️ You must be logged in to submit a success story!");
+      alert("You must be logged in to submit a success story!");
       navigate("/alumni-login");
       return;
     }
@@ -74,7 +74,7 @@ function SuccessStories() {
           : [],
       };
 
-      const res = await API.post("/success-stories", payload);
+      const res = await API.post("/success", payload);
 
       setStories([...stories, res.data]);
       setShowForm(false);

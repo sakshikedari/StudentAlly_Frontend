@@ -53,7 +53,7 @@ function App() {
           <Route path="/alumni-login" element={<AlumniLogin />} />
           <Route path="/directory" element={<AlumniDirectory />} />
           <Route path="/jobs" element={<JobPortal />} />
-          <Route path="/success-stories" element={<SuccessStories />} />
+          <Route path="/success" element={<SuccessStories />} />
           <Route path="/events" element={<Events />} />
           <Route path="/donate" element={<Donate />} />
         </Routes>
