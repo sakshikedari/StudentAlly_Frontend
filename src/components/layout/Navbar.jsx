@@ -35,7 +35,7 @@ function Navbar() {
 
     const fetchUserRole = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/user-role", { withCredentials: true });
+        const res = await axios.get("http://localhost:5000//api/auth/me", { withCredentials: true });
         console.log("Fetched User Role:", res.data.role);
         setUserRole(res.data.role);
       } catch (error) {

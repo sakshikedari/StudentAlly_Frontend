@@ -19,7 +19,7 @@ import ChatWidget from './components/ChatWidget'; // The floating widget
 import Chatbot from './pages/Chatbot';
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
+  baseURL: import.meta.env.VITE_BACKEND_URL || "http://localhost:5000",
   withCredentials: true,
 });
 
@@ -33,7 +33,7 @@ function App() {
 
     const fetchUserRole = async () => {
       try {
-        const res = await API.get("/user-role");
+        const res = await API.get("/api/auth/me");
         setUserRole(res.data.role);
       } catch (error) {
         console.error("Error fetching user role", error);

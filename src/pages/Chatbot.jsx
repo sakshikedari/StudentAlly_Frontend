@@ -4,7 +4,7 @@ import './Chatbot.css';
 const Chatbot = () => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([
-    { role: 'bot', text: "Hello! I'm your StudentAlly Assistant. How can I help you with queries regarding alumni, jobs, or events today?" }
+    { role: 'bot', text: "Hello! I'm Ally, your StudentAlly Assistant. How can I help you with queries regarding alumni, jobs, or events today?" }
   ]);
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef(null);
@@ -22,19 +22,26 @@ const Chatbot = () => {
 
     const userMsg = { role: 'user', text: input };
     setMessages(prev => [...prev, userMsg]);
+    const currentInput = input;
     setInput('');
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/chat/query', {
+      const backendBaseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+      
+      const response = await fetch(`${backendBaseUrl}/api/chat/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: input }),
+        body: JSON.stringify({ prompt: currentInput }),
       });
+
+      if (!response.ok) throw new Error('Network response was not ok');
+
       const data = await response.json();
       setMessages(prev => [...prev, { role: 'bot', text: data.message }]);
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'bot', text: "Sorry, I'm having trouble connecting right now." }]);
+      console.error("Chat Error:", error);
+      setMessages(prev => [...prev, { role: 'bot', text: "Ally is having trouble connecting. Please ensure the backend is running." }]);
     } finally {
       setLoading(false);
     }
@@ -44,7 +51,7 @@ const Chatbot = () => {
     <div className="chatbot-page">
       <div className="chat-container">
         <div className="chat-header">
-          <h2>StudentAlly AI Support</h2>
+          <h2>StudentAlly Support</h2>
         </div>
         <div className="chat-box">
           {messages.map((msg, index) => (
@@ -66,12 +73,15 @@ const Chatbot = () => {
         <div className="chat-input-area">
           <input
             type="text"
-            placeholder="Type your query here..."
+            placeholder="Ask Ally anything..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+            disabled={loading}
           />
-          <button onClick={handleSend} disabled={loading}>Send</button>
+          <button onClick={handleSend} disabled={loading || !input.trim()}>
+            {loading ? '...' : 'Send'}
+          </button>
         </div>
       </div>
     </div>

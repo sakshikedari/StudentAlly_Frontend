@@ -5,7 +5,7 @@ const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([
-    { role: 'bot', text: 'Hi! How can I help you today?' }
+    { role: 'bot', text: "Hi! I'm Ally. How can I help you with your career or StudentAlly today?" }
   ]);
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef(null);
@@ -23,22 +23,32 @@ const ChatWidget = () => {
 
     const userMsg = { role: 'user', text: input };
     setMessages((prev) => [...prev, userMsg]);
+    const currentInput = input; // Store input for the API call
     setInput('');
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/chat/query', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: input }),
-      });
-      const data = await response.json();
-      setMessages((prev) => [...prev, { role: 'bot', text: data.message }]);
-    } catch (error) {
-      setMessages((prev) => [...prev, { role: 'bot', text: 'Error connecting to AI.' }]);
-    } finally {
-      setLoading(false);
-    }
+  const backendBaseUrl = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000').replace(/\/$/, "");
+  
+  const response = await fetch(`${backendBaseUrl}/api/chat/query`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt: currentInput }),
+  });
+
+  const data = await response.json(); // Move this up
+
+  if (!response.ok) {
+    // This will print the actual error message from the server to your console
+    console.error("Backend Error Details:", data); 
+    throw new Error(data.error || 'Server error');
+  }
+
+  setMessages((prev) => [...prev, { role: 'bot', text: data.message }]);
+} catch (error) {
+  console.error("Chat Error:", error);
+  setMessages((prev) => [...prev, { role: 'bot', text: `Ally is stuck: ${error.message}` }]);
+}
   };
 
   return (
@@ -56,17 +66,26 @@ const ChatWidget = () => {
                 <div className="ai-bubble">{msg.text}</div>
               </div>
             ))}
-            {loading && <div className="ai-msg bot"><div className="ai-bubble loading">...</div></div>}
+            {loading && (
+              <div className="ai-msg bot">
+                <div className="ai-bubble loading">
+                   <span>.</span><span>.</span><span>.</span>
+                </div>
+              </div>
+            )}
             <div ref={chatEndRef} />
           </div>
           <div className="ai-chat-footer">
             <input 
-              placeholder="Ask me anything..." 
+              placeholder="Ask Ally anything..." 
               value={input} 
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+              disabled={loading}
             />
-            <button onClick={handleSend}>➤</button>
+            <button onClick={handleSend} disabled={loading}>
+              {loading ? '...' : '➤'}
+            </button>
           </div>
         </div>
       )}
