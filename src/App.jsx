@@ -15,6 +15,8 @@ import Donate from "./pages/Donate";
 import AdminRoutes from "./routes/AdminRoutes";
 import axios from "axios";
 import './index.css';
+import ChatWidget from './components/ChatWidget'; // The floating widget
+import Chatbot from './pages/Chatbot';
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -56,11 +58,13 @@ function App() {
           <Route path="/success" element={<SuccessStories />} />
           <Route path="/events" element={<Events />} />
           <Route path="/donate" element={<Donate />} />
+          <Route path="/queries" element={<Chatbot />} />
         </Routes>
 
         {/* Admin Panel Routes */}
         <AdminRoutes adminToken={adminToken} userRole={userRole} />
       </main>
+      <ChatWidget />
       <Footer />
     </div>
   );

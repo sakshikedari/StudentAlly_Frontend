@@ -1,0 +1,128 @@
+.ai-widget-wrapper {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 9999;
+  font-family: 'Inter', sans-serif;
+}
+
+.ai-trigger-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #a829e0; /* Match your image's purple theme */
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ai-trigger-btn:hover {
+  transform: scale(1.1);
+}
+
+.ai-chat-window {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
+  width: 350px;
+  height: 450px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ai-chat-header {
+  background: #a829e0;
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+}
+
+.ai-chat-header button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.ai-chat-body {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ai-msg {
+  display: flex;
+  width: 100%;
+}
+
+.ai-msg.user { justify-content: flex-end; }
+.ai-msg.bot { justify-content: flex-start; }
+
+.ai-bubble {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 15px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.user .ai-bubble {
+  background: #f0f0f0;
+  color: #333;
+  border-bottom-right-radius: 2px;
+}
+
+.bot .ai-bubble {
+  background: #f3e5f5;
+  color: #a829e0;
+  border-bottom-left-radius: 2px;
+}
+
+.ai-chat-footer {
+  padding: 15px;
+  border-top: 1px solid #eee;
+  display: flex;
+  gap: 8px;
+}
+
+.ai-chat-footer input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  outline: none;
+}
+
+.ai-chat-footer button {
+  background: #a829e0;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+}
